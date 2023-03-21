@@ -1,0 +1,91 @@
+version: '3.9'
+
+networks:
+  doctor_patient_appointment:
+    driver: "bridge"
+    
+
+# volumes:
+  #  db-data:
+
+services:
+
+#PHP-FPM service
+  app:
+    build: .
+    container_name: doctor_patient_appointment
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www/doctor_patient_appointment
+    depends_on:
+      - db
+      - redis
+
+    volumes:
+      - ./:/var/www/doctor_patient_appointment
+      - ./docker-files/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+
+    networks:
+      - doctor_patient_appointment
+
+#   #NGINX service
+  doctor_patient_appointment_webserver: 
+    image: nginx
+    container_name: doctor_patient_appointment_webserver
+    restart: unless-stopped
+    # tty: true
+    
+    ports:
+      - '9009:80'
+      - '9010:443'
+    
+    volumes:
+      - ./:/var/www/doctor_patient_appointment
+      - ./docker-files/nginx/conf.d/app.conf:/etc/nginx/conf.d/app.conf
+    
+    networks:
+      - doctor_patient_appointment
+  db:
+    platform: linux/x86_64 #comment this line out if using windows
+    container_name: doctor_patient_appointment_db
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_ROOT_PASSWORD: ${DB_PASSWORD}
+    restart: always
+    # tty: true
+    ports:
+      -  "3308:5432"
+
+    volumes:
+      -  ./storage/dbdata:/var/lib/pgsql
+      -  ./docker-files/pgsql/pgsql.cnf:/etc/pgsql/pgsql.cnf
+    networks:
+      - doctor_patient_appointment
+
+#setup db management interface
+  adminer:
+    container_name: doctor_patient_appointment_adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - "8096:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    networks:
+      - doctor_patient_appointment
+
+
+  redis:
+    container_name: doctor_patient_appointment_redis
+    image: redis:alpine
+    env_file:
+      - .env
+    ports:
+      - "6384:6379"
+    volumes:
+      - ./storage/redis/data:/data
+    networks:
+      - doctor_patient_appointment
