@@ -25,7 +25,7 @@ class StoreDoctorRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'email' => 'required|max:255|regex:/^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}/',
+            'email' => "required|max:255|regex:/^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}/|unique:users,email",
             'password' => 'required|min:6|max:25',
             'gender' => 'required',
             'education' => 'required',
