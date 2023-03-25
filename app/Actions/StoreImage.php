@@ -11,6 +11,6 @@ class StoreImage
 
         $file->storeAs("public/images/$userType", $filename);
 
-        return $filename;
+        return "storage/images/$userType/" . $filename;
     }
 }
