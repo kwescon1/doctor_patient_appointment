@@ -12,6 +12,6 @@ class FetchDoctors
     {
         $doctorRole = Role::whereName('doctor')->first();
 
-        return User::whereRoleId($doctorRole->id)->get();
+        return User::whereRoleId($doctorRole->id)->with('role')->get();
     }
 }
