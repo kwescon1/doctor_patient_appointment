@@ -36,7 +36,7 @@
                         </div>
                     @endif
                     @if (Session::has('error'))
-                        <div class="alert alert-success">
+                        <div class="alert alert-error">
                             {{ Session::get('error') }}
                         </div>
                     @endif
@@ -199,8 +199,8 @@
                                         <div class="form-group">
                                             <label for="exampleTextarea1">{{ __('About') }}</label>
                                             <textarea class="form-control @error('description') is-invalid @enderror" id="exampleTextarea1"
-                                                rows="4"name="description"></textarea>
-                                            {{ old('description') }}
+                                                rows="4"name="description">{{ old('description') }}</textarea>
+
                                             @error('description')
                                                 <span class="invalid-feedback"
                                                     role="alert"><strong>{{ $message }}</span>
