@@ -34,9 +34,9 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    @if (Session::has('message'))
+                    @if (Session::has('success'))
                         <div class="alert bg-success alert-success text-white text-center" role="alert">
-                            {{ Session::get('message') }}
+                            {{ Session::get('success') }}
                         </div>
                     @endif
                     <div class="card">
@@ -51,7 +51,7 @@
                                         <th>Phone number</th>
                                         <th>Department</th>
                                         <th class="nosort">&nbsp;</th>
-                                        <th class="nosort">&nbsp;</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -81,7 +81,7 @@
 
                                                     </div>
                                                 </td>
-                                                <td></td>
+
 
                                             </tr>
 

@@ -2,21 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Admin\Doctor\FetchDoctors;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Actions\Admin\Role\FetchRole;
-use App\Actions\Admin\Doctor\RegisterNewDoctor;
+use App\Actions\Admin\Doctor\FetchDoctor;
 use App\Http\Requests\StoreDoctorRequest;
+use App\Actions\Admin\Doctor\FetchDoctors;
+use App\Actions\Admin\Doctor\UpdateDoctor;
+use App\Http\Requests\UpdateDoctorRequest;
+use App\Actions\Admin\Doctor\RegisterNewDoctor;
 
 class DoctorController extends Controller
 {
     private $fetchRoles;
     private $fetchDoctors;
+    private $fetchDoctor;
+    private $updateDoctor;
 
-    public function __construct(FetchRole $fetchRoles, FetchDoctors $fetchDoctors)
+    public function __construct(FetchRole $fetchRoles, FetchDoctors $fetchDoctors, FetchDoctor $fetchDoctor, UpdateDoctor $updateDoctor)
     {
         $this->fetchRoles = $fetchRoles;
         $this->fetchDoctors = $fetchDoctors;
+        $this->fetchDoctor = $fetchDoctor;
+        $this->updateDoctor = $updateDoctor;
     }
     /**
      * Display a listing of the resource.
@@ -84,6 +92,11 @@ class DoctorController extends Controller
     public function edit($id)
     {
         //
+
+        $user = $this->fetchDoctor->handle($id);
+        $roles = $this->fetchRoles->execute();
+
+        return view('admin.doctor.edit', compact(['user', 'roles']));
     }
 
     /**
@@ -93,9 +106,16 @@ class DoctorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateDoctorRequest $request, $id)
     {
         //
+        $data =  $request->validated();
+
+        $user = $this->fetchDoctor->handle($id);
+
+        $this->updateDoctor->handle($data, $user);
+
+        return redirect()->route("doctor.index")->with('success', 'Doctor updated successfully');
     }
 
     /**
